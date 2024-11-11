@@ -1,5 +1,6 @@
 #include "crow.h"
 #include "routes/main.routes.h"
+#include "routes/db.routes.h"
 #include <filesystem>
 int main() {
     crow::SimpleApp app;

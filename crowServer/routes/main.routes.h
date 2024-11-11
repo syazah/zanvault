@@ -46,34 +46,14 @@ void setup_routes(crow::SimpleApp &app){
         if(!json_body){
             return crow::response(400, "No Body found");
         }
-        if (!json_body.has("username") || !json_body.has("name") || !json_body.has("password")) {
+        if (!json_body.has("username") || !json_body.has("password")) {
             return crow::response(400, "Missing required fields");
         }
-        string name = json_body["name"].s();
         string username = json_body["username"].s();
         string password = json_body["password"].s();
-    });
-// CREATING A DATABASE
-    CROW_ROUTE(app, "/api/v1/create-database").methods("POST"_method)([](const crow::request &req){
-        auto json_body = crow::json::load(req.body);
-        if(!json_body){
-            return crow::response(400, "No Body found");
-        }
-        if (!json_body.has("db_name") || !json_body.has("username") || !json_body.has("password")) {
-            return crow::response(400, "Missing required fields");
-        }
-
-
-        string db_name = json_body["db_name"].s();
-        string username = json_body["username"].s();
-        string password = json_body["password"].s();
-
-        if(find(username.begin(), username.end(), ' ') != username.end()){
-            return crow::response(500, "Username cannot contain spaces");
-        }
         ifstream instream(username+"/"+username+"credentials.json");
-        if (!instream) {
-            return crow::response(400, "Cannot read credentials");
+        if(!instream){
+            return crow::response(400,"User Not Found");
         }
         json jsonData;
         instream >> jsonData;
@@ -83,13 +63,51 @@ void setup_routes(crow::SimpleApp &app){
         if(password != jsonData["password"]){
             return crow::response(500, "Password is incorrect");
         }
-        string foldername = username+'/'+db_name;
-        if (filesystem::exists(foldername)) {
-            return crow::response(409, "Database with name '" + db_name + "' already exists for user '" + username + "'");
-        }
-        if (!filesystem::create_directory(foldername)) {
-            return crow::response(500, "Failed to create database directory");
-        }
-        return crow::response(200, "Database Created Successfully");
+        string id = username+"1";
+        jsonData["id"] = id;
+        instream.close();
+        ofstream outstream(username+"/"+username+"credentials.json");
+        outstream<<jsonData.dump(4);
+        outstream.close();
+        return crow::response(200, id);
     });
+// CREATING A DATABASE
+CROW_ROUTE(app, "/api/v1/create-database").methods("POST"_method)([](const crow::request&req){
+    auto jsonBody = crow::json::load(req.body);
+    if(!jsonBody.has("id") || !jsonBody.has("db_name")){
+        return crow::response(200, "No Valid Credentials");
+    }
+    string id = jsonBody["id"].s();
+    string db_name = jsonBody["db_name"].s();
+    string user_directory_path;
+    bool idExist = false;
+
+    //CHECKING IF ID EXISTS
+    for(const auto &entry : filesystem::directory_iterator(".")){
+        if(entry.is_directory()){
+            string username = entry.path().filename().string();
+            string credentialsPath = entry.path().string()+"/"+username+"credentials.json";
+            ifstream instream(credentialsPath);
+            if(instream){
+                json jsonData;
+                instream>>jsonData;
+                instream.close();
+                if(jsonData.contains("id") && jsonData["id"] == id){
+                    idExist = true;
+                    user_directory_path = entry.path().string();
+                }
+            }
+        }
+    }
+    if(!idExist){
+        return crow::response(400,"User Not Found");
+    }
+    if(filesystem::exists(user_directory_path+"/"+db_name)){
+        return crow::response(400, "Database Already exists, give a database with new name");
+    }
+    if(!filesystem::create_directory(user_directory_path+"/"+db_name)){
+        return crow::response(400, "Something went wrong while creating a database");
+    }
+    return crow::response(200, "Database Created");
+});
 }
