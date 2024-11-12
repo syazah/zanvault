@@ -2,6 +2,8 @@
   "files.associations": {
     "*.ejs": "html",
     "iosfwd": "cpp",
-    "filesystem": "cpp"
+    "filesystem": "cpp",
+    "chrono": "cpp",
+    "xstring": "cpp"
   }
 }

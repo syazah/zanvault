@@ -1,0 +1,5 @@
+new Schema{
+    name:{
+        type:String,
+    }
+}

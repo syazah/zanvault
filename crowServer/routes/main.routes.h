@@ -1,5 +1,6 @@
 #pragma once
 #include "crow.h"
+#include "utils/getUserDatabasePath.h"
 #include <fstream>
 #include <filesystem>
 #include <nlohmann/json.hpp>
@@ -28,7 +29,7 @@ void setup_routes(crow::SimpleApp &app){
         }
         string filename = username+"credentials.json";
         ofstream outfile(username+"/"+filename);
-           if (!outfile) {
+        if (!outfile) {
             return crow::response(500, "Failed to create credentials file");
         }
         outfile << "{\n";
@@ -72,42 +73,26 @@ void setup_routes(crow::SimpleApp &app){
         return crow::response(200, id);
     });
 // CREATING A DATABASE
-CROW_ROUTE(app, "/api/v1/create-database").methods("POST"_method)([](const crow::request&req){
-    auto jsonBody = crow::json::load(req.body);
-    if(!jsonBody.has("id") || !jsonBody.has("db_name")){
-        return crow::response(200, "No Valid Credentials");
-    }
-    string id = jsonBody["id"].s();
-    string db_name = jsonBody["db_name"].s();
-    string user_directory_path;
-    bool idExist = false;
-
-    //CHECKING IF ID EXISTS
-    for(const auto &entry : filesystem::directory_iterator(".")){
-        if(entry.is_directory()){
-            string username = entry.path().filename().string();
-            string credentialsPath = entry.path().string()+"/"+username+"credentials.json";
-            ifstream instream(credentialsPath);
-            if(instream){
-                json jsonData;
-                instream>>jsonData;
-                instream.close();
-                if(jsonData.contains("id") && jsonData["id"] == id){
-                    idExist = true;
-                    user_directory_path = entry.path().string();
-                }
-            }
+    CROW_ROUTE(app, "/api/v1/create-database").methods("POST"_method)([](const crow::request&req){
+        auto jsonBody = crow::json::load(req.body);
+        if(!jsonBody.has("id") || !jsonBody.has("db_name")){
+            return crow::response(200, "No Valid Credentials");
         }
-    }
-    if(!idExist){
-        return crow::response(400,"User Not Found");
-    }
-    if(filesystem::exists(user_directory_path+"/"+db_name)){
-        return crow::response(400, "Database Already exists, give a database with new name");
-    }
-    if(!filesystem::create_directory(user_directory_path+"/"+db_name)){
-        return crow::response(400, "Something went wrong while creating a database");
-    }
-    return crow::response(200, "Database Created");
-});
+        string id = jsonBody["id"].s();
+        string db_name = jsonBody["db_name"].s();
+        bool idExist = false;
+
+        //CHECKING IF ID EXISTS
+        string user_directory_path = getUserDatabasePath(id);
+        if(user_directory_path == ""){
+            return crow::response(400,"User Not Found");
+        }
+        if(filesystem::exists(user_directory_path+"/"+db_name)){
+            return crow::response(400, "Database Already exists, give a database with new name");
+        }
+        if(!filesystem::create_directory(user_directory_path+"/"+db_name)){
+            return crow::response(400, "Something went wrong while creating a database");
+        }
+        return crow::response(200, "Database Created");
+    });
 }

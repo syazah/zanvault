@@ -5,5 +5,6 @@
 int main() {
     crow::SimpleApp app;
     setup_routes(app);
+    setup_db_routes(app);
     app.port(8000).multithreaded().run();
 }
