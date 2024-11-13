@@ -3,6 +3,8 @@
 #include "utils/getUserDatabasePath.h"
 #include <fstream>
 #include <filesystem>
+#include <random>
+#include "utils/randomIDGenerator.h"
 #include <nlohmann/json.hpp>
 using namespace std;
 
@@ -20,7 +22,6 @@ void setup_routes(crow::SimpleApp &app){
         string name = json_body["name"].s();
         string username = json_body["username"].s();
         string password = json_body["password"].s();
-
         if(filesystem::exists(username)){
             return crow::response(400, "User with this username already exists");
         }
@@ -32,14 +33,18 @@ void setup_routes(crow::SimpleApp &app){
         if (!outfile) {
             return crow::response(500, "Failed to create credentials file");
         }
+        string id = generateRandomID(10);
         outfile << "{\n";
+        outfile << "  \"id\": \"" << id << "\",\n";
         outfile << "  \"name\": \"" << name << "\",\n";
         outfile << "  \"username\": \"" << username << "\",\n";
         outfile << "  \"password\": \"" << password << "\"\n";
         outfile << "}\n";
         outfile.close();
-
-        return crow::response(200, "User Created Successfully");
+        crow::json::wvalue resBody;
+        resBody["success"] = true;
+        resBody["id"] = id;
+        return crow::response(200, resBody);
     });
 // LOGIN USER
     CROW_ROUTE(app, "/api/v1/login-user").methods("POST"_method)([](const crow::request&req){
@@ -64,12 +69,11 @@ void setup_routes(crow::SimpleApp &app){
         if(password != jsonData["password"]){
             return crow::response(500, "Password is incorrect");
         }
-        string id = username+"1";
-        jsonData["id"] = id;
+        string id = jsonData["id"];
         instream.close();
-        ofstream outstream(username+"/"+username+"credentials.json");
-        outstream<<jsonData.dump(4);
-        outstream.close();
+        crow::json::wvalue resBody;
+        resBody["success"] = true;
+        resBody["id"] = id;
         return crow::response(200, id);
     });
 // CREATING A DATABASE

@@ -4,7 +4,7 @@ function Navbar() {
   return (
     <div className="w-full bg-zinc-950 sticky top-0 left-0 p-2 flex justify-between items-center">
       <div className="flex justify-start items-center">
-        <img />
+        <img src="/logo.png" className="w-8 h-8" />
         <h1 className="text-white font-bold text-lg">ZANVAULT</h1>
       </div>
       <div className="flex justify-start items-center gap-4">
