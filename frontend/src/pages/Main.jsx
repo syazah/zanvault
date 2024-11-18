@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 function Main() {
   const [createDatabasePopup, setCreateDatabasePopup] = useState(false);
   const [currentDatbases, setCurrentDatbases] = useState(null);
+  const token = sessionStorage.getItem("token");
   async function HandleFetchAllDatabases() {
     try {
-      const token = sessionStorage.getItem("token");
       const res = await fetch("/api/v1/get-databases", {
         method: "POST",
         body: JSON.stringify({ id: token }),
@@ -68,7 +69,10 @@ function Main() {
         ) : (
           <div className="flex justify-start items-start p-4 gap-2">
             {currentDatbases.map((database) => (
-              <div className="w-[200px] h-[100px] border-[1px] border-secondary rounded-xl flex justify-center items-center cursor-pointer flex-col text-white hover:bg-green-900 hover:scale-90 transition-all duration-300">
+              <Link
+                to={`/user/${token}?dbname=${database}`}
+                className="w-[200px] h-[100px] border-[1px] border-secondary rounded-xl flex justify-center items-center cursor-pointer flex-col text-white hover:bg-green-900 hover:scale-90 transition-all duration-300"
+              >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -84,7 +88,7 @@ function Main() {
                   />
                 </svg>
                 {database}
-              </div>
+              </Link>
             ))}
             <div
               onClick={() => setCreateDatabasePopup(true)}

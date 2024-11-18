@@ -5,7 +5,7 @@ const Home = lazy(() => import("./pages/Home"));
 const SignUp = lazy(() => import("./pages/SignUp"));
 const Main = lazy(() => import("./pages/Main"));
 const LogIn = lazy(() => import("./pages/LogIn"));
-
+const Database = lazy(() => import("./pages/Database"));
 function App() {
   return (
     <Suspense>
@@ -15,6 +15,7 @@ function App() {
           <Route path={"/login"} element={<LogIn />} />
           <Route path={"/signup"} element={<SignUp />} />
           <Route path={"/main/:id"} element={<Main />} />
+          <Route path={"/user/:id"} element={<Database />} />
         </Routes>
       </BrowserRouter>
     </Suspense>
