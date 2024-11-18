@@ -14,7 +14,10 @@ function Navbar() {
         <Link className="font-normal text-white">Contact</Link>
       </div>
       <div className="flex justify-start items-center gap-2">
-        <Link className="px-4 py-1 border-[2px] border-secondary rounded-full text-white hover:bg-secondary transition-all duration-300">
+        <Link
+          to={"/login"}
+          className="px-4 py-1 border-[2px] border-secondary rounded-full text-white hover:bg-secondary transition-all duration-300"
+        >
           Login
         </Link>
         <Link

@@ -1,4 +1,6 @@
 #pragma once
+#include <vector>
+#include <string>
 #include "crow.h"
 #include "utils/getUserDatabasePath.h"
 #include <fstream>
@@ -10,6 +12,7 @@ using namespace std;
 
 using json  = nlohmann::json;
 void setup_routes(crow::SimpleApp &app){
+//!POST ROUTES
 // CREATING USER
     CROW_ROUTE(app, "/api/v1/create-user").methods("POST"_method)([](const crow::request &req){
         auto json_body = crow::json::load(req.body);
@@ -22,6 +25,7 @@ void setup_routes(crow::SimpleApp &app){
         string name = json_body["name"].s();
         string username = json_body["username"].s();
         string password = json_body["password"].s();
+        string id = generateRandomID(10);
         if(filesystem::exists(username)){
             return crow::response(400, "User with this username already exists");
         }
@@ -33,7 +37,6 @@ void setup_routes(crow::SimpleApp &app){
         if (!outfile) {
             return crow::response(500, "Failed to create credentials file");
         }
-        string id = generateRandomID(10);
         outfile << "{\n";
         outfile << "  \"id\": \"" << id << "\",\n";
         outfile << "  \"name\": \"" << name << "\",\n";
@@ -74,7 +77,7 @@ void setup_routes(crow::SimpleApp &app){
         crow::json::wvalue resBody;
         resBody["success"] = true;
         resBody["id"] = id;
-        return crow::response(200, id);
+        return crow::response(200, resBody);
     });
 // CREATING A DATABASE
     CROW_ROUTE(app, "/api/v1/create-database").methods("POST"_method)([](const crow::request&req){
@@ -97,6 +100,29 @@ void setup_routes(crow::SimpleApp &app){
         if(!filesystem::create_directory(user_directory_path+"/"+db_name)){
             return crow::response(400, "Something went wrong while creating a database");
         }
-        return crow::response(200, "Database Created");
+        crow::json::wvalue resBody;
+        resBody["success"] = true;
+        return crow::response(200, resBody);
+    });
+
+//!GET ROUTES
+//GET DATABASES
+    CROW_ROUTE(app, "/api/v1/get-databases").methods("POST"_method)([](const crow::request&req){
+        auto reqBody = crow::json::load(req.body);
+        string id = reqBody["id"].s();
+        if(!reqBody.has("id")){
+            return crow::response(400, "No valid credentials found");
+        }
+        string userPath = getUserDatabasePath(id);
+        vector<string> databases;
+        for(const auto &entry : filesystem::directory_iterator(userPath)){
+            if(filesystem::is_directory(entry)){
+                databases.push_back(entry.path().filename().string());
+            }
+        }
+        crow::json::wvalue resBody;
+        resBody["success"] = true;
+        resBody["databases"] = databases;
+        return crow::response(200, resBody);
     });
 }

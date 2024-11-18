@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="D:\WebDev\Personal\database\crowServer\CMakeFiles\3859bd431d5cefbf34be1ba5d9d61ac2\generate.stamp.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{1B789E96-9603-310C-A59F-DADAFBA6428A}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

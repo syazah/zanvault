@@ -12,5 +12,7 @@ include_directories("C:/Users/Hp/vcpkg/installed/x64-windows/include")
 
 # Add your executable
 add_executable(crow_api main.cpp)
+add_compile_options(/FS)
+
 
 # As both Crow and Asio are header-only, no linking required

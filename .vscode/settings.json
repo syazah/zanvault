@@ -4,6 +4,7 @@
     "iosfwd": "cpp",
     "filesystem": "cpp",
     "chrono": "cpp",
-    "xstring": "cpp"
+    "xstring": "cpp",
+    "vector": "cpp"
   }
 }
