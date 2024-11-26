@@ -25,10 +25,10 @@ void setup_db_routes(crow::SimpleApp &app){
         if(!filesystem::exists(user_directory_path+"/"+db_name)){
             return crow::response(400, "Database not found");
         }
-        if(filesystem::exists(user_directory_path+"/"+db_name+"/"+tableName)){
+        if(filesystem::exists(user_directory_path+"/"+db_name+"/"+tableName+"s")){
             return crow::response(400, "The Table with this name already exists");
         }
-        if(!filesystem::create_directory(user_directory_path+"/"+db_name+"/"+tableName)){
+        if(!filesystem::create_directory(user_directory_path+"/"+db_name+"/"+tableName+"s")){
             return crow::response(400, "Table Can't be created something went wrong");
         }
         return crow::response(200, "Table Created Successfully");
@@ -65,4 +65,5 @@ void setup_db_routes(crow::SimpleApp &app){
         outstream.close();
         return crow::response(200, "Your schema file is created");
     });
+//
 }
