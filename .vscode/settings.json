@@ -5,6 +5,7 @@
     "filesystem": "cpp",
     "chrono": "cpp",
     "xstring": "cpp",
-    "vector": "cpp"
+    "vector": "cpp",
+    "xlocale": "cpp"
   }
 }
