@@ -1,16 +1,6 @@
 import React, { useState } from "react";
 
-function Sidebar({
-  tables,
-  setAddTable,
-  setSelectedTables,
-  selectedTables,
-  schemaData,
-  HandleGetSchema,
-  setAddSchema,
-}) {
-  const [loading, setLoading] = useState(false);
-  const [openSchemaIndex, setOpenSchemaIndex] = useState(-1);
+function Sidebar({ tables, setAddTable, setSelectedTables, selectedTables }) {
   return (
     <div className="w-[15%] bg-zinc-900 h-full border-r-[1px] border-secondary p-2 flex flex-col justify-between items-start">
       <h1 className="font-semibold text-xl text-white border-b-[1px] border-secondary">
@@ -26,17 +16,9 @@ function Sidebar({
                     const newSelectedTables = [...selectedTables, table];
                     setSelectedTables(newSelectedTables);
                   }
-                  setOpenSchemaIndex(index);
-                  setLoading(true);
-                  await HandleGetSchema(index);
-                  setLoading(false);
                 }}
                 key={index}
-                className={`w-full text-white capitalize flex justify-start items-center gap-1 ${
-                  openSchemaIndex === index
-                    ? "bg-secondary rounded-t-lg border-b-[1px] border-zinc-900"
-                    : "hover:bg-zinc-950  bg-zinc-900 rounded-full"
-                } cursor-pointer  text-sm group p-2`}
+                className={`w-full text-white capitalize flex justify-start items-center gap-1 cursor-pointer  text-sm group p-2`}
               >
                 {/* /NAME  */}
                 <svg
@@ -56,36 +38,6 @@ function Sidebar({
 
                 {table}
               </div>
-              {openSchemaIndex === index && (
-                <div className="w-full bg-secondary p-1 text-zinc-300 rounded-b-lg cursor-pointer hover:bg-green-800 text-sm">
-                  {loading ? (
-                    "loading..."
-                  ) : schemaData.exists === true ? (
-                    "schema"
-                  ) : (
-                    <h1
-                      onClick={() => setAddSchema(table)}
-                      className="flex text-sm justify-start items-center gap-1"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        strokeWidth={1.5}
-                        stroke="currentColor"
-                        className="size-5"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                        />
-                      </svg>
-                      Add Schema
-                    </h1>
-                  )}
-                </div>
-              )}
             </div>
           );
         })}

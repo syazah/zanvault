@@ -62,10 +62,10 @@ function Database() {
       return alert(JSON.stringify(error));
     }
   }
-  async function HandleGetSchema(index) {
+  async function HandleGetSchema(table_name) {
     try {
       const res = await fetch(
-        `/api/v1/database/schema?id=${token}&&db_name=${dbname}&&table_name=${allTables[index]}`,
+        `/api/v1/database/schema?id=${token}&&db_name=${dbname}&&table_name=${table_name}`,
         {
           method: "GET",
           headers: { "Content-Type": "application/json" },
@@ -134,9 +134,12 @@ function Database() {
             />
             {selectedTables.length > 0 && (
               <Datas
+                setAddSchema={setAddSchema}
                 selectedTables={selectedTables}
-                setDataTableSelected={setDataTableSelected}
                 dataTableSelected={dataTableSelected}
+                HandleGetSchema={HandleGetSchema}
+                schemaData={schemaData}
+                setSchemaData={setSchemaData}
               />
             )}
           </div>
@@ -173,7 +176,7 @@ function AddSchemaPopup({ addSchema, setAddSchema, id, db_name }) {
     }
   }
   return (
-    <div className="w-full h-full absolute flex justify-center items-center">
+    <div className="w-full h-full absolute flex justify-center items-center z-20">
       <div className="w-1/3 h-[400px] bg-zinc-900 rounded-xl p-2 flex flex-col">
         {/* HEADER  */}
         <div className="border-b-[1px] border-secondary flex justify-between items-center p-2">
@@ -303,7 +306,7 @@ function AddTablePopup({
   HandleAddTable,
 }) {
   return (
-    <div className="w-full h-full absolute bg-[rgb(10,10,10,0.2)] backdrop-blur-lg top-0 left-0 flex justify-center items-center">
+    <div className="w-full h-full absolute bg-[rgb(10,10,10,0.2)] backdrop-blur-lg top-0 left-0 flex justify-center items-center z-20">
       <div className="w-1/2 p-2 bg-zinc-900 rounded-xl flex flex-col justify-between items-center gap-4">
         <div className="w-full justify-between flex border-b-[1px] border-green-500 justify-sart items-center p-2">
           <h1 className="text-xl font-semibold text-white">Add Table</h1>
