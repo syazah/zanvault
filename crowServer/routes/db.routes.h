@@ -31,7 +31,9 @@ void setup_db_routes(crow::SimpleApp &app){
         if(!filesystem::create_directory(user_directory_path+"/"+db_name+"/"+tableName+"s")){
             return crow::response(400, "Table Can't be created something went wrong");
         }
-        return crow::response(200, "Table Created Successfully");
+        crow::json::wvalue resJson;
+        resJson["success"] = true;
+        return crow::response(200, resJson);
     });
 //ADDING SCHEMA FILE
     CROW_ROUTE(app, "/api/v1/database/create-schema").methods("POST"_method)([](const crow::request &req){
@@ -63,7 +65,61 @@ void setup_db_routes(crow::SimpleApp &app){
         }
         outstream << schema;
         outstream.close();
-        return crow::response(200, "Your schema file is created");
+        crow::json::wvalue resBody;
+        resBody["success"] = true;
+        return crow::response(200, resBody);
     });
-//ADDING XCHEMA 
+//!GET
+    //GET TABLE
+    CROW_ROUTE(app, "/api/v1/database/tables").methods("GET"_method)([](const crow::request &req){
+        auto queryparams = req.url_params;
+        string id = queryparams.get("id");
+        string db_name = queryparams.get("db_name");
+        if(id.empty()){
+            return crow::response(400, "id not found");
+        }
+        string userpath = getUserDatabasePath(id);
+        if(userpath == ""){
+            return crow::response(400, "user path not found");
+        }
+        vector<string> tables;
+        for(const auto &entry : filesystem::directory_iterator(userpath+"/"+db_name)){
+            if(filesystem::is_directory(entry)){
+                tables.push_back(entry.path().filename().string());
+            }
+        }
+        crow::json::wvalue resBody;
+        resBody["success"] = true;
+        resBody["tables"] = tables;
+        return crow::response(200, resBody);
+    });
+    //GET SCHEMA
+    CROW_ROUTE(app, "/api/v1/database/schema").methods("GET"_method)([](const crow::request &req){
+        auto queryparams = req.url_params;
+        string id = queryparams.get("id");
+        string db_name = queryparams.get("db_name");
+        string table_name = queryparams.get("table_name");
+        string userpath = getUserDatabasePath(id);
+        if(userpath == ""){
+            return crow::response(400, "user path not found");
+        }
+        string schemapath = userpath+"/"+db_name+"/"+table_name+"/schema.json";
+        bool exists = true;
+        if(!filesystem::exists(schemapath)){
+           exists = false;
+        }
+        crow::json::wvalue jsonData;
+        jsonData["success"] = true;
+        jsonData["exists"] = exists;
+        json schemaData;
+        if(exists){
+            ifstream instream(schemapath);
+            if(!instream){
+                return crow::response(500,"Cannot Read Schema File");
+            }
+            instream>>schemaData;
+            jsonData["schema"] = schemaData.dump();
+        }
+        return crow::response(200,jsonData);
+    });
 }

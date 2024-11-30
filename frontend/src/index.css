@@ -9,5 +9,9 @@
 }
 
 ::-webkit-scrollbar{
-    display: none;
+    width: 6px;
+}
+::-webkit-scrollbar-thumb{
+    width: 6px;
+    background-color: green;
 }
