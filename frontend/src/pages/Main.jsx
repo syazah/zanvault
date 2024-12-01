@@ -136,6 +136,7 @@ function CreateDatabasePopup({ setCreateDatabasePopup }) {
       if (data.success === true) {
         alert("Database, Created Successfully !!");
         setDbName("");
+        window.location.reload();
         setCreateDatabasePopup(false);
       } else {
         alert("Something Went Wrong");

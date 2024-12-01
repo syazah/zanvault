@@ -42,11 +42,17 @@ void setup_data_routes(crow::SimpleApp &app){
             json schemaJson;
             instream>>schemaJson;
             instream.close();
+            string primary;
             for(auto &[key, expected] :schemaJson.items()){
                 if(!data.has(key)){
                     return crow::response(400, "Data is missing required fields"+key);
                 }
                 auto value = data[key];
+                if(key == "primary"){
+                    string primaryKey = schemaJson["primary"];
+                    primary = data[primaryKey].s();
+                    continue;
+                }
                 if (expected == "int") {
                     try {
                         int val = value.d(); // Attempts to get as number
@@ -68,10 +74,10 @@ void setup_data_routes(crow::SimpleApp &app){
                     }
                 }
             }
-            if(filesystem::exists(user_directory_path+"/"+db_name+"/"+table_name+"/"+"s"+".json")){
+            if(filesystem::exists(user_directory_path+"/"+db_name+"/"+table_name+"/"+primary+".json")){
                 return crow::response(400, "A user already exists for this can't create a new one, try editing the file");
             }
-            string dataFilePath = user_directory_path+"/"+db_name+"/"+table_name+"/"+"s"+".json";
+            string dataFilePath = user_directory_path+"/"+db_name+"/"+table_name+"/"+primary+".json";
             ofstream outstream(dataFilePath);
             if(!outstream){
                 return crow::response(500, "Schema File Cannot be created try again later");
@@ -85,5 +91,39 @@ void setup_data_routes(crow::SimpleApp &app){
         }catch (const std::exception& e) {
             return crow::response(500, "Unexpected server error: " + string(e.what()));
         }
+    });
+//!GET DATA
+//GET ALL DATA
+    //GET SCHEMA
+    CROW_ROUTE(app, "/api/v1/data").methods("GET"_method)([](const crow::request &req){
+        auto queryparams = req.url_params;
+        string id = queryparams.get("id");
+        string db_name = queryparams.get("db_name");
+        string table_name = queryparams.get("table_name");
+        string userpath = getUserDatabasePath(id);
+        if(userpath == ""){
+            return crow::response(400, "user path not found");
+        }
+        string tablepath = userpath+"/"+db_name+"/"+table_name;
+        vector<string> dataArray;
+        for(const auto &entry : filesystem::directory_iterator(tablepath)){
+            if(entry.path().filename().string() == "schema.json"){
+                continue;
+            }
+            string currentPath = tablepath+"/"+entry.path().filename().string();
+            json newData;
+            ifstream instream(currentPath);
+            if(!instream){
+                return crow::response(400, "Something went wrong while fetching the file path");
+            }
+            instream>>newData;
+            instream.close();
+            string newDataString = newData.dump();
+            dataArray.push_back(newDataString);
+        }
+        crow::json::wvalue jsonData;
+        jsonData["success"] = true;
+        jsonData["data"] = dataArray;
+        return crow::response(200,jsonData);
     });
 }
