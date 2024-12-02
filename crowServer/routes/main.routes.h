@@ -11,9 +11,88 @@
 using namespace std;
 
 using json  = nlohmann::json;
+
+// class User {
+// public:
+//     string name;
+//     string username;
+//     string email;
+//     string password;
+
+//     User(const string& name, const string& username, const string& email, const string& password)
+//         : name(name), username(username), email(email), password(password) {}
+
+//     crow::json::wvalue toJson(const string& id) const {
+//         crow::json::wvalue json;
+//         json["id"] = id;
+//         json["name"] = name;
+//         json["username"] = username;
+//         json["email"] = email;
+//         return json;
+//     }
+
+//     bool saveToFile(const string& folder, const string& id) const {
+//         filesystem::create_directory(folder);
+//         string filename = folder + "/credentials.json";
+
+//         ofstream outfile(filename);
+//         if (!outfile) {
+//             return false;
+//         }
+
+//         outfile << "{\n";
+//         outfile << "  \"id\": \"" << id << "\",\n";
+//         outfile << "  \"name\": \"" << name << "\",\n";
+//         outfile << "  \"username\": \"" << username << "\",\n";
+//         outfile << "  \"email\": \"" << email << "\",\n";
+//         outfile << "  \"password\": \"" << password << "\"\n";
+//         outfile << "}\n";
+
+//         outfile.close();
+//         return true;
+//     }
+// };
+
+// // UserManager class to handle user operations
+// class UserManager {
+// public:
+//     static crow::response createUser(const crow::request& req) {
+//         auto json_body = crow::json::load(req.body);
+//         if (!json_body) {
+//             return crow::response(400, "No Body found");
+//         }
+
+//         if (!json_body.has("name") || !json_body.has("username") || !json_body.has("email") || !json_body.has("password")) {
+//             return crow::response(400, "Missing required fields");
+//         }
+
+//         string name = json_body["name"].s();
+//         string username = json_body["username"].s();
+//         string email = json_body["email"].s();
+//         string password = json_body["password"].s();
+
+//         if (filesystem::exists(username)) {
+//             return crow::response(400, "User with this username already exists");
+//         }
+
+//         User user(name, username, email, password);
+//         string id = generateRandomID(10); // Use external function
+
+//         if (!user.saveToFile(username, id)) {
+//             return crow::response(500, "Failed to create credentials file");
+//         }
+
+//         return crow::response(200, user.toJson(id));
+//     }
+// };
 void setup_routes(crow::SimpleApp &app){
 //!POST ROUTES
 // CREATING USER
+    //CLASS BASED APPROACH
+    // CROW_ROUTE(app, "/api/v1/create-user").methods("POST"_method)([](const crow::request& req) {
+    //             return UserManager::createUser(req);
+    // });
+    // NORMAL APPROACH
     CROW_ROUTE(app, "/api/v1/create-user").methods("POST"_method)([](const crow::request &req){
         auto json_body = crow::json::load(req.body);
         if(!json_body){

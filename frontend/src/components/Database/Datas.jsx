@@ -225,7 +225,10 @@ function Datas({
             allData.map((data, index) => {
               const parsedData = JSON.parse(data);
               return (
-                <div key={index} className="w-full bg-zinc-900 p-2">
+                <div
+                  key={index}
+                  className="w-full bg-zinc-900 p-2 border-b-[1px] border-secondary"
+                >
                   {Object.entries(parsedData).map(
                     ([key, value], i) =>
                       key !== "primary" && (

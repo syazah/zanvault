@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function Main() {
   const [createDatabasePopup, setCreateDatabasePopup] = useState(false);
   const [currentDatbases, setCurrentDatbases] = useState(null);
   const token = sessionStorage.getItem("token");
+  const navigate = useNavigate();
   async function HandleFetchAllDatabases() {
     try {
       const res = await fetch("/api/v1/get-databases", {
@@ -41,7 +42,13 @@ function Main() {
           Azaan Ahmad
         </div>
         <div className="justify-center items-center">
-          <button className="px-4 py-2 bg-secondary rounded-full">
+          <button
+            onClick={() => {
+              sessionStorage.removeItem("token");
+              navigate("/");
+            }}
+            className="px-4 py-2 bg-secondary rounded-full"
+          >
             Log Out
           </button>
         </div>
