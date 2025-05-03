@@ -5,7 +5,7 @@ function SignUp() {
     name: "",
     username: "",
     password: "",
-  });
+  });23
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   async function handleSubmit(e) {
