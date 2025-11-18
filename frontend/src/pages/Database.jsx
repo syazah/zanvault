@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Sidebar from "../components/Database/Sidebar";
 import Topbar from "../components/Database/Topbar";
 import Datas from "../components/Database/Datas";
 
 function Database() {
   const location = useLocation();
+  const navigate = useNavigate();
   const queryParams = new URLSearchParams(location.search);
   const dbname = queryParams.get("dbname");
   const [addTable, setAddTable] = useState(false);
@@ -124,6 +125,14 @@ function Database() {
             />
           )}
           <div className="w-[85%] h-full flex justify-start flex-col items-start">
+            <div className="w-full flex justify-end items-center p-2">
+              <button
+                onClick={() => navigate(`/query-builder/${token}/${dbname}`)}
+                className="px-4 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-800"
+              >
+                Open Query Builder
+              </button>
+            </div>
             <Topbar
               setSelectedTables={setSelectedTables}
               selectedTables={selectedTables}
@@ -274,9 +283,8 @@ function AddSchemaPopup({ addSchema, setAddSchema, id, db_name }) {
                       onClick={() => {
                         setPrimary(key);
                       }}
-                      className={` ${
-                        primary === key ? "flex" : "hidden group-hover:flex"
-                      } w-4 h-4 rounded-full bg-yellow-600 justify-center items-center mr-2`}
+                      className={` ${primary === key ? "flex" : "hidden group-hover:flex"
+                        } w-4 h-4 rounded-full bg-yellow-600 justify-center items-center mr-2`}
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -304,9 +312,8 @@ function AddSchemaPopup({ addSchema, setAddSchema, id, db_name }) {
                       newSchema[key] = e.target.value;
                       setSchema(newSchema);
                     }}
-                    className={`text-base bg-zinc-800  p-1 rounded-full cursor-pointer focus:bg-secondary outline-none ${
-                      schema[key] === null ? "text-red-600" : "text-white"
-                    }`}
+                    className={`text-base bg-zinc-800  p-1 rounded-full cursor-pointer focus:bg-secondary outline-none ${schema[key] === null ? "text-red-600" : "text-white"
+                      }`}
                   >
                     <option value={null}>null</option>
                     <option value={"int"}>int</option>

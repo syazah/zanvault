@@ -1,5 +1,6 @@
 import { lazy, Suspense } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import QueryBuilder from "./pages/QueryBuilder";
 
 const Home = lazy(() => import("./pages/Home"));
 const SignUp = lazy(() => import("./pages/SignUp"));
@@ -16,6 +17,7 @@ function App() {
           <Route path={"/signup"} element={<SignUp />} />
           <Route path={"/main/:id"} element={<Main />} />
           <Route path={"/user/:id"} element={<Database />} />
+          <Route path="/query-builder/:id/:dbname" element={<QueryBuilder />} />
         </Routes>
       </BrowserRouter>
     </Suspense>

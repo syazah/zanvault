@@ -49,7 +49,9 @@ void setup_data_routes(crow::SimpleApp &app){
                 }
                 auto value = data[key];
                 if(key == "primary"){
+                    cout<<"Reached Primary"<<endl;
                     string primaryKey = schemaJson["primary"];
+                    cout<<primaryKey<<endl;
                     primary = data[primaryKey].s();
                     continue;
                 }
@@ -74,6 +76,7 @@ void setup_data_routes(crow::SimpleApp &app){
                     }
                 }
             }
+            cout<<"PASSED"<<endl;
             if(filesystem::exists(user_directory_path+"/"+db_name+"/"+table_name+"/"+primary+".json")){
                 return crow::response(400, "A user already exists for this can't create a new one, try editing the file");
             }

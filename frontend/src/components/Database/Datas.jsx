@@ -36,8 +36,9 @@ function Datas({
       const initialData = schemaKeys.reduce((acc, key) => {
         if (key === "primary") {
           acc[key] = "";
+        } else {
+          acc[key] = null;
         }
-        acc[key] = null;
         return acc;
       }, {});
       setNewData(initialData);
@@ -183,8 +184,8 @@ function Datas({
                         parsedSchema[key] === "int"
                           ? "number"
                           : parsedSchema[key] === "bool"
-                          ? undefined
-                          : "text"
+                            ? undefined
+                            : "text"
                       }
                       className={
                         parsedSchema[key] !== "bool"
