@@ -125,12 +125,12 @@ function Database() {
             />
           )}
           <div className="w-[85%] h-full flex justify-start flex-col items-start">
-            <div className="w-full flex justify-end items-center p-2">
+            <div className="w-full flex justify-end items-center p-2 bg-zinc-900">
               <button
                 onClick={() => navigate(`/query-builder/${token}/${dbname}`)}
-                className="px-4 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-800"
+                className="px-4 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-800 absolut text-sm"
               >
-                Open Query Builder
+                Query Builder
               </button>
             </div>
             <Topbar
