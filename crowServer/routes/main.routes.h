@@ -129,35 +129,38 @@ void setup_routes(crow::SimpleApp &app){
         return crow::response(200, resBody);
     });
 // LOGIN USER
-    CROW_ROUTE(app, "/api/v1/login-user").methods("POST"_method)([](const crow::request&req){
-        auto json_body = crow::json::load(req.body);
-        if(!json_body){
-            return crow::response(400, "No Body found");
-        }
-        if (!json_body.has("username") || !json_body.has("password")) {
-            return crow::response(400, "Missing required fields");
-        }
-        string username = json_body["username"].s();
-        string password = json_body["password"].s();
-        ifstream instream(username+"/"+username+"credentials.json");
-        if(!instream){
-            return crow::response(400,"User Not Found");
-        }
-        json jsonData;
-        instream >> jsonData;
-        if(username != jsonData["username"]){
-            return crow::response(500, "User with this username not found");
-        }
-        if(password != jsonData["password"]){
-            return crow::response(500, "Password is incorrect");
-        }
-        string id = jsonData["id"];
-        instream.close();
-        crow::json::wvalue resBody;
-        resBody["success"] = true;
-        resBody["id"] = id;
-        return crow::response(200, resBody);
-    });
+CROW_ROUTE(app, "/api/v1/login-user").methods("POST"_method)([](const crow::request&req){
+    auto json_body = crow::json::load(req.body);
+    if(!json_body){
+        return crow::response(400, "No Body found");
+    }
+    if (!json_body.has("username") || !json_body.has("password")) {
+        return crow::response(400, "Missing required fields");
+    }
+    string username = json_body["username"].s();
+    string password = json_body["password"].s();
+    ifstream instream(username+"/"+username+"credentials.json");
+    if(!instream){
+        return crow::response(400,"User Not Found");
+    }
+    json jsonData;
+    instream >> jsonData;
+    
+    // FIX: Convert nlohmann::json to string before comparing
+    if(username != jsonData["username"].get<string>()){
+        return crow::response(500, "User with this username not found");
+    }
+    if(password != jsonData["password"].get<string>()){
+        return crow::response(500, "Password is incorrect");
+    }
+    
+    string id = jsonData["id"].get<string>();  // Also fix this line!
+    instream.close();
+    crow::json::wvalue resBody;
+    resBody["success"] = true;
+    resBody["id"] = id;
+    return crow::response(200, resBody);
+});
 // CREATING A DATABASE
     CROW_ROUTE(app, "/api/v1/create-database").methods("POST"_method)([](const crow::request&req){
         auto jsonBody = crow::json::load(req.body);
