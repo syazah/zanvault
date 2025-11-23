@@ -8,10 +8,10 @@ function Navbar() {
         <h1 className="text-white font-bold text-lg">ZANVAULT</h1>
       </div>
       <div className="flex justify-start items-center gap-4">
-        <Link className="font-normal text-white">Features</Link>
-        <Link className="font-normal text-white">Docs</Link>
-        <Link className="font-normal text-white">About</Link>
-        <Link className="font-normal text-white">Contact</Link>
+        <Link to= "/features" className="font-normal text-white">Features</Link>
+        <Link to= "/docs" className="font-normal text-white">Docs</Link>
+        <Link to= "/about" className="font-normal text-white">About</Link>
+        <Link to= "/contact" className="font-normal text-white">Contact</Link>
       </div>
       <div className="flex justify-start items-center gap-2">
         <Link
